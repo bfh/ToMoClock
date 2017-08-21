@@ -1,5 +1,3 @@
 # ToMoClock
-# Description
+# Description its Clock thats can orginize your Tasks by Calcualting the time that you need for every day tasks for example , the time you need to make your bed or to take a shower, and than its will save all the tasks
 # Features
-This alarmclock has several features. The user can define parameters such as time needed for breakfast, for showering, for waking up etc.
-The alarmclock compares the agenda and the timetable for trains and buses and then calculates automatically when the user has to wake up. 
