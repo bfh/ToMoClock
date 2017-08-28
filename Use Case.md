@@ -9,3 +9,13 @@
 
 
 # Use Case
+  1.	ToMoClock verbindet mit dem Internet
+  2.	Eine Agenda erstellen
+  3.	Ein Zeitplan erstellen , im Zeitplan steht die zeit , die man für die täglichen aufgaben braucht
+      Z.b für duschen, aufstehen, Fruhstück . .usw
+  4.	Der Transportfahrplan wird von einer Website oder app importiert , Z.b vom SBB App
+  5.	Vergliechen zwischen alle 3 tablen (Agenda, Zeitplan, Transportfahrplan)
+  6.	Rechnen um wie viel uhr muss man aufstehen
+  
+# Agenda
+In der agenda muss ( die Addresse, Zeit und Datum) geschrieben sein
