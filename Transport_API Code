@@ -1,0 +1,55 @@
+<html>
+	<head>
+		<title>Transport API</title>		
+	</head>
+	<body>
+		<h1>Timetable</h1>		
+
+			Start:
+			<input type="text" name="start" maxlength="50" value="Biel"><br>
+			Ziel:
+			<input type="text" name="destination" maxlength="50" value="Bern"><br>
+			<button onclick="doStuff()">Suche</button>
+
+			<div name="results"></div>
+		
+		
+		<script>
+		function getConnection (start, destination, callback) {
+			var request = new XMLHttpRequest();
+			request.open('GET', 'http://transport.opendata.ch/v1/connections?from='+start+'&to='+destination, true);
+
+			request.onload = function() {
+				if (this.status >= 200 && this.status < 400) {
+				// Success!
+					var data = JSON.parse(this.response);
+					callback(data.connections[0]);
+				} else {
+				// We reached our target server, but it returned an error
+
+				}
+			};
+
+			request.onerror = function() {
+				// There was a connection error of some sort
+			};
+
+			request.send();
+		}
+
+		function doStuff() {
+			
+			var start = document.getElementsByName("start")[0].value;
+			var destination = document.getElementsByName("destination")[0].value;
+			function processResult(value) {
+				var res = document.getElementsByName('results')[0];
+			    res.insertAdjacentHTML('beforeend', '<pre>'+JSON.stringify(value)+'</pre>'	);
+				console.log(value)
+				console.log(new Date(Date.now()).toISOString())
+			}
+			getConnection(start, destination, processResult)
+		}
+
+		</script>		
+	</body>
+</html>
