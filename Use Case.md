@@ -29,6 +29,7 @@ Use Case Tabelle
 
 # MVP
 
+```
 TRAIN_TO_EVENT = 10min
 BED_TO_TRAIN = 60min
 
