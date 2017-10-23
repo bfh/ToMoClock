@@ -24,3 +24,18 @@ In der agenda muss ( die Addresse, Zeit und Datum) geschrieben sein
 
 Use Case Tabelle
 [Use Case.docx](https://github.com/bfh/ToMoClock/blob/master/Use%20Case.docx)
+
+
+
+# MVP
+
+TRAIN_TO_EVENT = 10min
+BED_TO_TRAIN = 60min
+
+currentLocation -> Ortname
+googleCalendarEvent -> Ortname, DateTime
+
+alarmClockTime = transportAPI(currentLocation.Ortname -> googleCalendarEventOrtname, googleCalendarEvent.DateTime - TRAIN_TO_EVENT) - BED_TO_TRAIN
+
+
+
