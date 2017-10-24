@@ -9,8 +9,6 @@
 			<input type="text" name="start" maxlength="50" value="Amsoldingen, Kreuz"><br>
 			Ziel:
 			<input type="text" name="destination" maxlength="50" value="Biel"><br>
-			Nächste Verbindung ab:<br>
-			<input type="text" name="nextConnection" maxlentgh="5" value="0"> Minuten<br>
 			<button onclick="doStuff()">Suche</button>
 
 			<div name="results"></div>
@@ -19,13 +17,13 @@
 		<script>
 		function getConnection (start, destination, datetime, callback) {
 			var request = new XMLHttpRequest();
-			request.open('GET', 'http://transport.opendata.ch/v1/connections?from='+start+'&to='+destination+'&time='+datetime, true);
+			request.open('GET', 'http://transport.opendata.ch/v1/connections?from='+start+'&to='+destination+'&time='+datetime.getHours()+':'+datetime.getMinutes()+'&isArrivalTime=1', true);
 
 			request.onload = function() {
 				if (this.status >= 200 && this.status < 400) {
 				// Success!
 					var data = JSON.parse(this.response);
-					callback(data.connections[0]);
+					callback(data.connections[1]);
 				} else {
 				// We reached our target server, but it returned an error
 
@@ -43,16 +41,17 @@
 			
 			var start = document.getElementsByName("start")[0].value;
 			var destination = document.getElementsByName("destination")[0].value;
-			var nextConnection = document.getElementsByName("nextConnection")[0].value * 60;
-			var zeitpunkt = console.log(new Date(Date.now()).toISOString());
-			var datetime = zeitpunkt + nextConnection;
+			var nextConnection = 60 * 60;
+			var zeitpunkt = new Date();
+			var	datetime = new Date (zeitpunkt);
+			datetime.setMinutes ( zeitpunkt.getMinutes () - 10 );
 			function processResult(value) {
+				var departure = new Date (value.from.departure);
+				var alertTime = new Date (departure);
+				alertTime.setMinutes (departure.getMinutes() - 60);		
+				console.log("AlertTime", alertTime);
 				var res = document.getElementsByName('results')[0];
-			    res.insertAdjacentHTML('beforeend', '<pre>'+JSON.stringify(value)+'</pre>'	);
-				console.log(value);
-				console.log(nextConnection);
-				
-				console.log(datetime);
+			    res.insertAdjacentHTML('beforeend', '<h1>'+alertTime.getHours()+':'+alertTime.getMinutes()+'</h1>'	)
 			}
 			getConnection(start, destination, datetime, processResult)
 		}
