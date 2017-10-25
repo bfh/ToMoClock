@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 	<head>
 		<title>Transport API</title>		
 	</head>
@@ -8,7 +8,7 @@
 			Start:
 			<input type="text" name="start" maxlength="50" value="Amsoldingen, Kreuz"><br>
 			Ziel:
-			<input type="text" name="destination" maxlength="50" value="Biel"><br>
+			<input type="text" name="destination" maxlength="50" value="Biel, Höhenweg"><br>
 			<button onclick="doStuff()">Suche</button>
 
 			<div name="results"></div>
@@ -41,7 +41,6 @@
 			
 			var start = document.getElementsByName("start")[0].value;
 			var destination = document.getElementsByName("destination")[0].value;
-			var nextConnection = 60 * 60;
 			var zeitpunkt = new Date();
 			var	datetime = new Date (zeitpunkt);
 			datetime.setMinutes ( zeitpunkt.getMinutes () - 10 );
@@ -50,8 +49,9 @@
 				var alertTime = new Date (departure);
 				alertTime.setMinutes (departure.getMinutes() - 60);		
 				console.log("AlertTime", alertTime);
+				var arrival = new Date (value.to.arrival);
 				var res = document.getElementsByName('results')[0];
-			    res.insertAdjacentHTML('beforeend', '<h1>'+alertTime.getHours()+':'+alertTime.getMinutes()+'</h1>'	)
+			    res.insertAdjacentHTML('beforeend', '<h1>'+alertTime.getHours()+':'+alertTime.getMinutes()+' Weckzeit</h1><br><h1>'+departure.getHours()+':'+departure.getMinutes()+' Abfahrtszeit</h1><br><h1>'+arrival.getHours()+':'+arrival.getMinutes()+' Ankunftszeit</h1'	)
 			}
 			getConnection(start, destination, datetime, processResult)
 		}
