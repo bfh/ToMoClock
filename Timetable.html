@@ -1,9 +1,18 @@
-﻿<html>
+<html>
 	<head>
 		<title>Transport API</title>		
 	</head>
 	<body>
+    <div id="authorize-div" style="display: true">
+      <span>Authorize access to Google Calendar API</span>
+      <!--Button for the user to click to initiate auth sequence -->
+      <button id="authorize-button" onclick="handleAuthClick(event)">
+        Authorize
+      </button>
+    </div>
+
 		<h1>Timetable</h1>		
+
 
 			Start:
 			<input type="text" name="start" maxlength="50" value="Amsoldingen, Kreuz"><br>
@@ -14,9 +23,72 @@
 			<div name="results"></div>
 		
 		
-		<script src = GoogleCalendarTest.html></script>
-		
-		<script>
+    <script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
+    <script>
+      var CLIENT_ID = '843749328717-5rj5c0iuvaddlricoshtghnoq1290d1k.apps.googleusercontent.com';
+ 
+      var SCOPES = ["https://www.googleapis.com/auth/calendar"];
+ 
+      /**
+       * Check if current user has authorized this application.
+       */
+      function checkAuth() {
+        gapi.auth.authorize(
+          {
+            'client_id': CLIENT_ID,
+            'scope': SCOPES.join(' '),
+            'immediate': true
+          }, handleAuthResult);
+      }
+ 
+      /**
+       * Handle response from authorization server.
+       *
+       * @param {Object} authResult Authorization result.
+       */
+      function handleAuthResult(authResult) {
+        var authorizeDiv = document.getElementById('authorize-div');
+        if (authResult && !authResult.error) {
+          // Hide auth UI, then load client library.
+          authorizeDiv.style.display = 'none';
+        } else {
+          // Show auth UI, allowing the user to initiate authorization by
+          // clicking authorize button.
+          authorizeDiv.style.display = 'inline';
+        }
+        gapi.client.load('calendar', 'v3');
+      }
+ 
+      /**
+       * Initiate auth flow in response to user clicking authorize button.
+       *
+       * @param {Event} event Button click event.
+       */
+      function handleAuthClick(event) {
+        gapi.auth.authorize(
+          {client_id: CLIENT_ID, scope: SCOPES, immediate: false},
+          handleAuthResult);
+        return false;
+      }
+
+     function upcomingEvent(cb) {
+        gapi.client.calendar.events.list({
+          'calendarId': 'primary',
+          'timeMin': (new Date()).toISOString(),
+          'showDeleted': false,
+          'singleEvents': true,
+          'maxResults': 10,
+          'orderBy': 'startTime'
+        }).then(function(response) {
+          var events = response.result.items;
+          if (events.length > 0) {
+              cb(events[0]);
+            } else {
+              cb(false);
+            }
+        });
+      }
+
 		function getConnection (start, destination, datetime, callback) {
 			var request = new XMLHttpRequest();
 			request.open('GET', 'http://transport.opendata.ch/v1/connections?from='+start+'&to='+destination+'&time='+datetime.getHours()+':'+datetime.getMinutes()+'&isArrivalTime=1', true);
@@ -39,13 +111,14 @@
 			request.send();
 		}
 
-		function doStuff() {
-			
+    function doStuff() {
+       upcomingEvent(calcTime);
+    }
+
+		function calcTime(event) {
 			var start = document.getElementsByName("start")[0].value;
-			//var destination = document.getElementsByName("destination")[0].value;
 			var destination = event.location;
-			console.log(destination)
-			var zeitpunkt = new Date (event.getHours(), event.getMinutes())
+			var zeitpunkt = new Date (event.start.dateTime)
 			var	datetime = new Date (zeitpunkt);
 			datetime.setMinutes ( zeitpunkt.getMinutes () - 10 );
 			function processResult(value) {
@@ -55,7 +128,8 @@
 				console.log("AlertTime", alertTime);
 				var arrival = new Date (value.to.arrival);
 				var res = document.getElementsByName('results')[0];
-			    res.insertAdjacentHTML('beforeend', '<h1>'+alertTime.getHours()+':'+alertTime.getMinutes()+' Weckzeit</h1><br><h1>'+departure.getHours()+':'+departure.getMinutes()+' Abfahrtszeit</h1><br><h1>'+arrival.getHours()+':'+arrival.getMinutes()+' Ankunftszeit</h1'	)
+        var add0 = function(t){return t < 10 ? '0' + t : t}
+	      res.insertAdjacentHTML('beforeend', '<h1>'+add0(alertTime.getHours())+':'+add0(alertTime.getMinutes())+' Weckzeit</h1><br><h1>'+add0(departure.getHours())+':'+add0(departure.getMinutes())+' Abfahrtszeit ('+value.from.location.name+')</h1><br><h1>'+add0(arrival.getHours())+':'+add0(arrival.getMinutes())+' Ankunftszeit ('+value.to.location.name+')</h1><br><h1>'+add0(zeitpunkt.getHours())+':'+add0(zeitpunkt.getMinutes())+' '+event.summary)
 			}
 			getConnection(start, destination, datetime, processResult)
 		}
