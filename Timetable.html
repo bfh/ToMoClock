@@ -7,12 +7,14 @@
 
 			Start:
 			<input type="text" name="start" maxlength="50" value="Amsoldingen, Kreuz"><br>
-			Ziel:
-			<input type="text" name="destination" maxlength="50" value="Biel, Höhenweg"><br>
+			<!--Ziel:
+			<input type="text" name="destination" maxlength="50" value="Biel, Höhenweg"><br>-->
 			<button onclick="doStuff()">Suche</button>
 
 			<div name="results"></div>
 		
+		
+		<script src = GoogleCalendarTest.html></script>
 		
 		<script>
 		function getConnection (start, destination, datetime, callback) {
@@ -40,8 +42,10 @@
 		function doStuff() {
 			
 			var start = document.getElementsByName("start")[0].value;
-			var destination = document.getElementsByName("destination")[0].value;
-			var zeitpunkt = new Date();
+			//var destination = document.getElementsByName("destination")[0].value;
+			var destination = event.location;
+			console.log(destination)
+			var zeitpunkt = new Date (event.getHours(), event.getMinutes())
 			var	datetime = new Date (zeitpunkt);
 			datetime.setMinutes ( zeitpunkt.getMinutes () - 10 );
 			function processResult(value) {
